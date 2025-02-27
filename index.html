@@ -1,56 +1,179 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menstrual Cycle Predictor</title>
+    <title>ตัวช่วยคาดการณ์วันมีประจำเดือน</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; max-width: 600px; margin: auto; }
         input, button { margin: 5px; padding: 8px; font-size: 16px; }
         .result { margin-top: 15px; font-weight: bold; color: blue; }
+        .alert { color: red; font-weight: bold; }
+        .optional { color: gray; font-size: 14px; }
+        .info-box { text-align: left; background: #f9f9f9; padding: 15px; margin-top: 20px; border-left: 4px solid #ffcc00; }
+        .lang-btn { font-size: 14px; padding: 5px 10px; cursor: pointer; }
+        .footer { margin-top: 30px; font-size: 12px; color: gray; }
+        .disclaimer { font-size: 12px; margin-top: 20px; color: red; font-weight: bold; }
+        .date-container { display: flex; flex-direction: column; align-items: center; }
+        .date-row { display: flex; justify-content: space-between; width: 100%; }
+        .date-row label { text-align: left; flex: 1; }
+        .date-row input { flex: 1; }
     </style>
 </head>
 <body>
-    <h2>Menstrual Cycle Predictor</h2>
-    <p>Enter your last 3 onset dates:</p>
+    <button class="lang-btn" onclick="toggleLanguage()">🇹🇭 TH / 🇬🇧 EN</button>
 
-    <label>Onset #1:</label> <input type="date" id="date1"><br>
-    <label>Onset #2:</label> <input type="date" id="date2"><br>
-    <label>Onset #3:</label> <input type="date" id="date3"><br>
-    <button onclick="calculateNext()">Predict Next Onset</button>
+    <h2 id="title">ตัวช่วยคาดการณ์วันมีประจำเดือน</h2>
+    <p id="instruction">กรอก <b>วันที่เริ่มมีประจำเดือน</b> (ย้อนหลัง → ล่าสุด) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง</p>
+
+    <div class="date-container">
+        <div class="date-row"><label id="date5-label" class="optional">วันที่ #5 (ถ้ามี):</label> <input type="date" id="date5"></div>
+        <div class="date-row"><label id="date4-label" class="optional">วันที่ #4 (ถ้ามี):</label> <input type="date" id="date4"></div>
+        <div class="date-row"><label id="date3-label">วันที่ #3 (รองลงมา):</label> <input type="date" id="date3" required></div>
+        <div class="date-row"><label id="date2-label">วันที่ #2 (ก่อนหน้า):</label> <input type="date" id="date2" required></div>
+        <div class="date-row"><label id="date1-label">วันที่ #1 (ล่าสุด):</label> <input type="date" id="date1" required></div>
+    </div>
+
+    <button onclick="calculateNext()" id="calculate-btn">คำนวณวันมีประจำเดือนถัดไป</button>
 
     <div class="result" id="result"></div>
+    <div class="alert" id="alert"></div>
+
+    <div class="info-box">
+        <strong>⚠️ <span id="advice-title">ข้อควรระวัง:</span></strong>
+        <ul>
+            <li id="advice-1">หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ</li>
+            <li id="advice-2">หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์</li>
+            <li id="advice-3">หากใช้ <b>ยาคุมกำเนิด/ฮอร์โมน</b> รอบเดือนอาจไม่แน่นอน</li>
+        </ul>
+    </div>
+
+    <div class="disclaimer" id="disclaimer">
+        เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์
+    </div>
+
+    <div class="footer" id="footer">
+        จัดทำโดย นพ.วิชชากร ปุณยกนก<br>
+        แก้ไขล่าสุด 27 กุมภาพันธ์ พ.ศ. 2568
+    </div>
 
     <script>
+        // Store all translations here
+        const translations = {
+            "th": {
+                "title": "ตัวช่วยคาดการณ์วันมีประจำเดือน",
+                "instruction": "กรอก <b>วันที่เริ่มมีประจำเดือน</b> (ย้อนหลัง → ล่าสุด) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง",
+                "date5-label": "วันที่ #5 (ถ้ามี):",
+                "date4-label": "วันที่ #4 (ถ้ามี):",
+                "date3-label": "วันที่ #3 (รองลงมา):",
+                "date2-label": "วันที่ #2 (ก่อนหน้า):",
+                "date1-label": "วันที่ #1 (ล่าสุด):",
+                "calculate-btn": "คำนวณวันมีประจำเดือนถัดไป",
+                "advice-title": "ข้อควรระวัง:",
+                "advice-1": "หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ",
+                "advice-2": "หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์",
+                "advice-3": "หากใช้ ยาคุมกำเนิด/ฮอร์โมน รอบเดือนอาจไม่แน่นอน",
+                "disclaimer": "เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์",
+                "footer": "จัดทำโดย นพ.วิชชากร ปุณยกนก<br>แก้ไขล่าสุด 27 กุมภาพันธ์ พ.ศ. 2568"
+            },
+            "en": {
+                "title": "Menstrual Cycle Predictor",
+                "instruction": "Enter <b>date of onset</b> (oldest → most recent), at least 3 dates, up to 5 dates",
+                "date5-label": "Date #5 (if any):",
+                "date4-label": "Date #4 (if any):",
+                "date3-label": "Date #3 (older):",
+                "date2-label": "Date #2 (previous):",
+                "date1-label": "Date #1 (latest):",
+                "calculate-btn": "Predict Next Period Date",
+                "advice-title": "Caution:",
+                "advice-1": "If the cycle is shorter than 21 days or longer than 35 days, or obviously irregular, it could be a sign of a health issue.",
+                "advice-2": "If you miss your period for more than 90 consecutive days, please consult a doctor.",
+                "advice-3": "If you're using birth control or hormones, your cycle might be unpredictable.",
+                "disclaimer": "This document is only a knowledge tool and does not replace diagnosis or medical advice.",
+                "footer": "Created by Vitchakorn Poonyakanok<br>Last updated: February 27, 2025"
+            }
+        };
+
         function calculateNext() {
-            let d1 = document.getElementById('date1').value;
-            let d2 = document.getElementById('date2').value;
-            let d3 = document.getElementById('date3').value;
+            // Reset alerts/results each time
+            document.getElementById('alert').innerText = "";
+            document.getElementById('result').innerText = "";
 
-            let dates = [d1, d2, d3]
-                .filter(v => v)
-                .map(v => new Date(v))
-                .sort((a,b) => a - b);
+            // Gather and filter out empty
+            let rawDates = [
+                document.getElementById('date5').value,
+                document.getElementById('date4').value,
+                document.getElementById('date3').value,
+                document.getElementById('date2').value,
+                document.getElementById('date1').value
+            ].filter(Boolean);
 
-            if (dates.length < 2) {
-                document.getElementById('result').innerText = "Please enter at least 2 valid dates.";
+            // Need at least 3
+            if (rawDates.length < 3) {
+                document.getElementById('result').innerHTML = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ย้อนหลัง → ล่าสุด)";
                 return;
             }
 
+            // Convert to Date objects
+            let dates = rawDates.map(d => new Date(d));
+
+            // Ensure the order is from oldest to newest
+            for (let i = 0; i < dates.length - 1; i++) {
+                if (dates[i] > dates[i + 1]) {
+                    document.getElementById('alert').innerText = "⚠️ กรุณาเรียงลำดับวันที่ให้ถูกต้อง (ย้อนหลัง → ล่าสุด)";
+                    return;
+                }
+            }
+
+            // Calculate differences in days
             let cycleLengths = [];
             for (let i = 0; i < dates.length - 1; i++) {
-                let diff = (dates[i+1] - dates[i]) / (1000*60*60*24);
+                let diff = (dates[i+1] - dates[i]) / (1000 * 60 * 60 * 24);
                 cycleLengths.push(diff);
             }
 
-            let avgCycle = cycleLengths.reduce((a, b) => a + b, 0) / cycleLengths.length;
+            // Sort them to find median
+            let sortedCycles = [...cycleLengths].sort((a, b) => a - b);
+            let mid = Math.floor(sortedCycles.length / 2);
+            let medianCycle = 0;
+            if (sortedCycles.length % 2 === 1) {
+                medianCycle = sortedCycles[mid];
+            } else {
+                medianCycle = (sortedCycles[mid - 1] + sortedCycles[mid]) / 2;
+            }
 
+            // The newest date is the last in the array
             let lastDate = dates[dates.length - 1];
-            let predicted = new Date(lastDate.getTime());
-            predicted.setDate(predicted.getDate() + avgCycle);
+            let predicted = new Date(lastDate);
+            predicted.setDate(predicted.getDate() + medianCycle);
 
-            document.getElementById('result').innerText = 
-                "Next expected onset: " + predicted.toDateString();
+            // Show results
+            document.getElementById('result').innerHTML = `
+                <b>คาดการณ์วันมีประจำเดือนถัดไป:</b> ${predicted.toDateString()}<br>
+                <b>ความยาวรอบเดือน (วัน):</b> ${cycleLengths.join(", ")}<br>
+                <b>ค่ากลางของความยาวรอบเดือน:</b> ${medianCycle.toFixed(1)} วัน
+            `;
+        }
+
+        function toggleLanguage() {
+            let lang = document.documentElement.lang === "th" ? "en" : "th";
+            document.documentElement.lang = lang;
+
+            // Update each element based on the translations object
+            document.getElementById("title").innerHTML = translations[lang]["title"];
+            document.getElementById("instruction").innerHTML = translations[lang]["instruction"];
+            document.getElementById("date5-label").innerText = translations[lang]["date5-label"];
+            document.getElementById("date4-label").innerText = translations[lang]["date4-label"];
+            document.getElementById("date3-label").innerText = translations[lang]["date3-label"];
+            document.getElementById("date2-label").innerText = translations[lang]["date2-label"];
+            document.getElementById("date1-label").innerText = translations[lang]["date1-label"];
+            document.getElementById("calculate-btn").innerText = translations[lang]["calculate-btn"];
+            document.getElementById("advice-title").innerText = translations[lang]["advice-title"];
+            document.getElementById("advice-1").innerText = translations[lang]["advice-1"];
+            document.getElementById("advice-2").innerText = translations[lang]["advice-2"];
+            document.getElementById("advice-3").innerText = translations[lang]["advice-3"];
+            document.getElementById("disclaimer").innerText = translations[lang]["disclaimer"];
+            document.getElementById("footer").innerHTML = translations[lang]["footer"];
         }
     </script>
 </body>
