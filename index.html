@@ -44,7 +44,6 @@
         <ul>
             <li id="advice-1">หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ</li>
             <li id="advice-2">หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์</li>
-            <li id="advice-3">หากใช้ <b>ยาคุมกำเนิด/ฮอร์โมน</b> รอบเดือนอาจไม่แน่นอน</li>
         </ul>
     </div>
 
@@ -72,7 +71,6 @@
                 "advice-title": "ข้อควรระวัง:",
                 "advice-1": "หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ",
                 "advice-2": "หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์",
-                "advice-3": "หากใช้ ยาคุมกำเนิด/ฮอร์โมน รอบเดือนอาจไม่แน่นอน",
                 "disclaimer": "เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์",
                 "footer": "จัดทำโดย นพ.วิชชากร ปุณยกนก<br>แก้ไขล่าสุด 27 กุมภาพันธ์ พ.ศ. 2568"
             },
@@ -88,7 +86,6 @@
                 "advice-title": "Caution:",
                 "advice-1": "If the cycle is shorter than 21 days or longer than 35 days, or obviously irregular, it could be a sign of a health issue.",
                 "advice-2": "If you miss your period for more than 90 consecutive days, please consult a doctor.",
-                "advice-3": "If you're using birth control or hormones, your cycle might be unpredictable.",
                 "disclaimer": "This document is only a knowledge tool and does not replace diagnosis or medical advice.",
                 "footer": "Created by Vitchakorn Poonyakanok<br>Last updated: February 27, 2025"
             }
@@ -99,7 +96,10 @@
             document.getElementById('alert').innerText = "";
             document.getElementById('result').innerText = "";
 
-            // Gather and filter out empty
+            // Current language
+            let currentLang = document.documentElement.lang;
+
+            // Gather dates (removing empty fields)
             let rawDates = [
                 document.getElementById('date5').value,
                 document.getElementById('date4').value,
@@ -110,56 +110,86 @@
 
             // Need at least 3
             if (rawDates.length < 3) {
-                document.getElementById('result').innerHTML = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ย้อนหลัง → ล่าสุด)";
+                let msgTH = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ย้อนหลัง → ล่าสุด)";
+                let msgEN = "Please enter at least 3 dates (oldest → most recent)";
+                document.getElementById('result').innerText = (currentLang === "th") ? msgTH : msgEN;
                 return;
             }
 
             // Convert to Date objects
             let dates = rawDates.map(d => new Date(d));
 
-            // Ensure the order is from oldest to newest
+            // Check if properly ordered (oldest → newest)
             for (let i = 0; i < dates.length - 1; i++) {
-                if (dates[i] > dates[i + 1]) {
-                    document.getElementById('alert').innerText = "⚠️ กรุณาเรียงลำดับวันที่ให้ถูกต้อง (ย้อนหลัง → ล่าสุด)";
+                if (dates[i] > dates[i+1]) {
+                    let warnTH = "⚠️ กรุณาเรียงลำดับวันที่ให้ถูกต้อง (ย้อนหลัง → ล่าสุด)";
+                    let warnEN = "⚠️ Please ensure dates are in correct order (oldest → most recent)";
+                    document.getElementById('alert').innerText = (currentLang === "th") ? warnTH : warnEN;
                     return;
                 }
             }
 
-            // Calculate differences in days
+            // Calculate cycle lengths in days
             let cycleLengths = [];
             for (let i = 0; i < dates.length - 1; i++) {
                 let diff = (dates[i+1] - dates[i]) / (1000 * 60 * 60 * 24);
                 cycleLengths.push(diff);
             }
 
-            // Sort them to find median
+            // Find the median cycle length
             let sortedCycles = [...cycleLengths].sort((a, b) => a - b);
             let mid = Math.floor(sortedCycles.length / 2);
-            let medianCycle = 0;
+            let medianCycle;
             if (sortedCycles.length % 2 === 1) {
                 medianCycle = sortedCycles[mid];
             } else {
                 medianCycle = (sortedCycles[mid - 1] + sortedCycles[mid]) / 2;
             }
 
-            // The newest date is the last in the array
+            // Calculate variability as the median of absolute differences from the medianCycle
+            let diffsFromMedian = cycleLengths.map(c => Math.abs(c - medianCycle));
+            let sortedDiffs = diffsFromMedian.sort((a,b) => a - b);
+            let midDiff = Math.floor(sortedDiffs.length / 2);
+            let medianDiff;
+            if (sortedDiffs.length % 2 === 1) {
+                medianDiff = sortedDiffs[midDiff];
+            } else {
+                medianDiff = (sortedDiffs[midDiff - 1] + sortedDiffs[midDiff]) / 2;
+            }
+
+            let isIrregular = medianDiff >= 9;
+
+            // Predict next date (starting from the latest date)
             let lastDate = dates[dates.length - 1];
             let predicted = new Date(lastDate);
             predicted.setDate(predicted.getDate() + medianCycle);
 
-            // Show results
-            document.getElementById('result').innerHTML = `
+            // Prepare result text in both languages
+            let resultTH = `
                 <b>คาดการณ์วันมีประจำเดือนถัดไป:</b> ${predicted.toDateString()}<br>
                 <b>ความยาวรอบเดือน (วัน):</b> ${cycleLengths.join(", ")}<br>
-                <b>ค่ากลางของความยาวรอบเดือน:</b> ${medianCycle.toFixed(1)} วัน
+                <b>ค่ากลางของความยาวรอบเดือน:</b> ${medianCycle.toFixed(1)} วัน<br>
+                <b>ความแปรปรวน (median difference):</b> ${medianDiff.toFixed(1)} วัน<br>
+                ${isIrregular ? "รอบประจำเดือนจัดว่าไม่สม่ำเสมอ (Irregular)." 
+                              : "รอบประจำเดือนค่อนข้างสม่ำเสมอ (Regular)."}
             `;
+            let resultEN = `
+                <b>Predicted next period date:</b> ${predicted.toDateString()}<br>
+                <b>Cycle lengths (days):</b> ${cycleLengths.join(", ")}<br>
+                <b>Median cycle length (days):</b> ${medianCycle.toFixed(1)}<br>
+                <b>Median difference (variability):</b> ${medianDiff.toFixed(1)} days<br>
+                ${isIrregular ? "The cycle is considered Irregular." 
+                              : "The cycle is considered Regular."}
+            `;
+
+            // Display based on current language
+            document.getElementById('result').innerHTML = (currentLang === "th") ? resultTH : resultEN;
         }
 
         function toggleLanguage() {
             let lang = document.documentElement.lang === "th" ? "en" : "th";
             document.documentElement.lang = lang;
 
-            // Update each element based on the translations object
             document.getElementById("title").innerHTML = translations[lang]["title"];
             document.getElementById("instruction").innerHTML = translations[lang]["instruction"];
             document.getElementById("date5-label").innerText = translations[lang]["date5-label"];
@@ -171,7 +201,6 @@
             document.getElementById("advice-title").innerText = translations[lang]["advice-title"];
             document.getElementById("advice-1").innerText = translations[lang]["advice-1"];
             document.getElementById("advice-2").innerText = translations[lang]["advice-2"];
-            document.getElementById("advice-3").innerText = translations[lang]["advice-3"];
             document.getElementById("disclaimer").innerText = translations[lang]["disclaimer"];
             document.getElementById("footer").innerHTML = translations[lang]["footer"];
         }
