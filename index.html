@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menstrual Cycle Predictor</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        input, button { margin: 5px; padding: 8px; font-size: 16px; }
+        .result { margin-top: 15px; font-weight: bold; color: blue; }
+    </style>
+</head>
+<body>
+    <h2>Menstrual Cycle Predictor</h2>
+    <p>Enter your last 3 onset dates:</p>
+
+    <label>Onset #1:</label> <input type="date" id="date1"><br>
+    <label>Onset #2:</label> <input type="date" id="date2"><br>
+    <label>Onset #3:</label> <input type="date" id="date3"><br>
+    <button onclick="calculateNext()">Predict Next Onset</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function calculateNext() {
+            let d1 = document.getElementById('date1').value;
+            let d2 = document.getElementById('date2').value;
+            let d3 = document.getElementById('date3').value;
+
+            let dates = [d1, d2, d3]
+                .filter(v => v)
+                .map(v => new Date(v))
+                .sort((a,b) => a - b);
+
+            if (dates.length < 2) {
+                document.getElementById('result').innerText = "Please enter at least 2 valid dates.";
+                return;
+            }
+
+            let cycleLengths = [];
+            for (let i = 0; i < dates.length - 1; i++) {
+                let diff = (dates[i+1] - dates[i]) / (1000*60*60*24);
+                cycleLengths.push(diff);
+            }
+
+            let avgCycle = cycleLengths.reduce((a, b) => a + b, 0) / cycleLengths.length;
+
+            let lastDate = dates[dates.length - 1];
+            let predicted = new Date(lastDate.getTime());
+            predicted.setDate(predicted.getDate() + avgCycle);
+
+            document.getElementById('result').innerText = 
+                "Next expected onset: " + predicted.toDateString();
+        }
+    </script>
+</body>
+</html>
