@@ -24,28 +24,28 @@
   <button class="lang-btn" onclick="toggleLanguage()">🇹🇭 TH / 🇬🇧 EN</button>
 
   <h2 id="title">ตัวช่วยคาดการณ์วันมีประจำเดือน</h2>
-  <p id="instruction">กรอก <b>วันแรกของประจำเดือน</b> (ล่าสุด → ย้อนหลัง) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง</p>
+  <p id="instruction">กรอก <b>วันที่เริ่มมีประจำเดือน</b> (ย้อนหลัง → ล่าสุด) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง</p>
 
   <div class="date-container">
     <div class="date-row">
-      <label id="date1-label">วันแรกของประจำเดือนครั้งล่าสุด (LMP):</label>
-      <input type="date" id="date1" required>
+      <label id="date5-label" class="optional">วันที่ #5 (ถ้ามี):</label>
+      <input type="date" id="date5">
     </div>
     <div class="date-row">
-      <label id="date2-label">วันแรกของประจำเดือนครั้งก่อนหน้า (PMP):</label>
-      <input type="date" id="date2" required>
-    </div>
-    <div class="date-row">
-      <label id="date3-label">วันแรกของประจำเดือนก่อนหน้านั้น:</label>
-      <input type="date" id="date3" required>
-    </div>
-    <div class="date-row">
-      <label id="date4-label" class="optional">(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:</label>
+      <label id="date4-label" class="optional">วันที่ #4 (ถ้ามี):</label>
       <input type="date" id="date4">
     </div>
     <div class="date-row">
-      <label id="date5-label" class="optional">(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:</label>
-      <input type="date" id="date5">
+      <label id="date3-label">วันที่ #3 (รองลงมา):</label>
+      <input type="date" id="date3" required>
+    </div>
+    <div class="date-row">
+      <label id="date2-label">วันที่ #2 (ก่อนหน้า):</label>
+      <input type="date" id="date2" required>
+    </div>
+    <div class="date-row">
+      <label id="date1-label">วันที่ #1 (ล่าสุด):</label>
+      <input type="date" id="date1" required>
     </div>
   </div>
 
@@ -68,7 +68,7 @@
 
   <div class="footer" id="footer">
     จัดทำโดย นพ.วิชชากร ปุณยกนก<br>
-    แก้ไขล่าสุด 28 กุมภาพันธ์ 2568<br>
+    แก้ไขล่าสุด 27 กุมภาพันธ์ พ.ศ. 2568<br>
     <a href="https://github.com/vk-poonyakanok/menstrual-cycle-predictor" target="_blank">GitHub</a>
   </div>
 
@@ -77,33 +77,33 @@
     const translations = {
       "th": {
         "title": "ตัวช่วยคาดการณ์วันมีประจำเดือน",
-        "instruction": "กรอก <b>วันแรกของประจำเดือน</b> (ล่าสุด → ย้อนหลัง) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง",
-        "date1-label": "วันแรกของประจำเดือนครั้งล่าสุด (LMP):",
-        "date2-label": "วันแรกของประจำเดือนครั้งก่อนหน้า (PMP):",
-        "date3-label": "วันแรกของประจำเดือนก่อนหน้านั้น:",
-        "date4-label": "(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:",
-        "date5-label": "(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:",
+        "instruction": "กรอก <b>วันที่เริ่มมีประจำเดือน</b> (ย้อนหลัง → ล่าสุด) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง",
+        "date5-label": "วันที่ #5 (ถ้ามี):",
+        "date4-label": "วันที่ #4 (ถ้ามี):",
+        "date3-label": "วันที่ #3 (รองลงมา):",
+        "date2-label": "วันที่ #2 (ก่อนหน้า):",
+        "date1-label": "วันที่ #1 (ล่าสุด):",
         "calculate-btn": "คำนวณวันมีประจำเดือนถัดไป",
         "advice-title": "ข้อควรระวัง:",
         "advice-1": "หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ",
         "advice-2": "หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์",
         "disclaimer": "เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์",
-        "footer": "จัดทำโดย นพ.วิชชากร ปุณยกนก<br>แก้ไขล่าสุด 28 กุมภาพันธ์ 2568<br><a href='https://github.com/vk-poonyakanok/menstrual-cycle-predictor' target='_blank'>GitHub</a>"
+        "footer": "จัดทำโดย นพ.วิชชากร ปุณยกนก<br>แก้ไขล่าสุด 27 กุมภาพันธ์ พ.ศ. 2568<br><a href='https://github.com/vk-poonyakanok/menstrual-cycle-predictor' target='_blank'>GitHub</a>"
       },
       "en": {
         "title": "Menstrual Cycle Predictor",
-        "instruction": "Enter the <b>first day of each period</b> (most recent → earlier) at least 3 times, up to 5 times",
-        "date1-label": "First day of the most recent period (LMP):",
-        "date2-label": "First day of the previous period (PMP):",
-        "date3-label": "First day of the earlier period:",
-        "date4-label": "(If available) First day of the earlier period:",
-        "date5-label": "(If available) First day of the earlier period:",
+        "instruction": "Enter <b>date of onset</b> (oldest → most recent), at least 3 dates, up to 5 dates",
+        "date5-label": "Date #5 (if any):",
+        "date4-label": "Date #4 (if any):",
+        "date3-label": "Date #3 (older):",
+        "date2-label": "Date #2 (previous):",
+        "date1-label": "Date #1 (latest):",
         "calculate-btn": "Predict Next Period Date",
         "advice-title": "Caution:",
         "advice-1": "If the cycle is shorter than 21 days or longer than 35 days, or obviously irregular, it could be a sign of a health issue.",
         "advice-2": "If you miss your period for more than 90 consecutive days, please consult a doctor.",
         "disclaimer": "This document is only a knowledge tool and does not replace diagnosis or medical advice.",
-        "footer": "Created by Vitchakorn Poonyakanok<br>Last updated: February 28, 2025<br><a href='https://github.com/vk-poonyakanok/menstrual-cycle-predictor' target='_blank'>GitHub</a>"
+        "footer": "Created by Vitchakorn Poonyakanok<br>Last updated: February 27, 2025<br><a href='https://github.com/vk-poonyakanok/menstrual-cycle-predictor' target='_blank'>GitHub</a>"
       }
     };
 
@@ -115,9 +115,7 @@
       // Get current language
       let currentLang = document.documentElement.lang;
 
-      // Gather dates in ascending order (oldest to newest)
-      // Although fields are displayed in reverse order (most recent → earlier),
-      // we collect them as: [date5, date4, date3, date2, date1]
+      // Gather dates (ignoring empty fields)
       let rawDates = [
         document.getElementById('date5').value,
         document.getElementById('date4').value,
@@ -128,8 +126,8 @@
 
       // Require at least 3 dates
       if (rawDates.length < 3) {
-        let msgTH = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ล่าสุด → ย้อนหลัง)";
-        let msgEN = "Please enter at least 3 dates (most recent → earlier)";
+        let msgTH = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ย้อนหลัง → ล่าสุด)";
+        let msgEN = "Please enter at least 3 dates (oldest → most recent)";
         document.getElementById('result').innerText = (currentLang === "th") ? msgTH : msgEN;
         return;
       }
@@ -140,8 +138,8 @@
       // Ensure proper ordering (oldest → newest)
       for (let i = 0; i < dates.length - 1; i++) {
         if (dates[i] > dates[i + 1]) {
-          let warnTH = "⚠️ กรุณาเรียงลำดับวันที่ให้ถูกต้อง (ล่าสุด → ย้อนหลัง)";
-          let warnEN = "⚠️ Please ensure dates are in correct order (most recent → earlier)";
+          let warnTH = "⚠️ กรุณาเรียงลำดับวันที่ให้ถูกต้อง (ย้อนหลัง → ล่าสุด)";
+          let warnEN = "⚠️ Please ensure dates are in correct order (oldest → most recent)";
           document.getElementById('alert').innerText = (currentLang === "th") ? warnTH : warnEN;
           return;
         }
@@ -154,14 +152,14 @@
         cycleLengths.push(diff);
       }
 
-      // Find the median cycle length (for information purposes)
+      // Find the median cycle length
       let sortedCycles = [...cycleLengths].sort((a, b) => a - b);
       let mid = Math.floor(sortedCycles.length / 2);
       let medianCycle = (sortedCycles.length % 2 === 1)
         ? sortedCycles[mid]
         : (sortedCycles[mid - 1] + sortedCycles[mid]) / 2;
 
-      // Calculate the median absolute difference of cycle lengths
+      // Calculate variability: median of absolute differences from medianCycle
       let diffsFromMedian = cycleLengths.map(c => Math.abs(c - medianCycle));
       let sortedDiffs = diffsFromMedian.sort((a, b) => a - b);
       let midDiff = Math.floor(sortedDiffs.length / 2);
@@ -169,16 +167,9 @@
         ? sortedDiffs[midDiff]
         : (sortedDiffs[midDiff - 1] + sortedDiffs[midDiff]) / 2;
 
-      // Calculate range values (max and min cycle lengths)
-      let maxCycle = Math.max(...cycleLengths);
-      let minCycle = Math.min(...cycleLengths);
+      let isIrregular = medianDiff >= 9;
 
-      // Determine if the cycle is irregular:
-      // Condition 1: median absolute difference is ≥9, OR
-      // Condition 2: any cycle length is out of normal range (max >35 or min <21)
-      let isIrregular = (medianDiff >= 9) || (maxCycle > 35) || (minCycle < 21);
-
-      // Predict the next period date (using the most recent input date)
+      // Predict the next period date (using the latest input date)
       let lastDate = dates[dates.length - 1];
       let predicted = new Date(lastDate);
       predicted.setDate(predicted.getDate() + medianCycle);
@@ -221,11 +212,11 @@
       // Update text elements from the translations object
       document.getElementById("title").innerHTML = translations[lang]["title"];
       document.getElementById("instruction").innerHTML = translations[lang]["instruction"];
-      document.getElementById("date1-label").innerText = translations[lang]["date1-label"];
-      document.getElementById("date2-label").innerText = translations[lang]["date2-label"];
-      document.getElementById("date3-label").innerText = translations[lang]["date3-label"];
-      document.getElementById("date4-label").innerText = translations[lang]["date4-label"];
       document.getElementById("date5-label").innerText = translations[lang]["date5-label"];
+      document.getElementById("date4-label").innerText = translations[lang]["date4-label"];
+      document.getElementById("date3-label").innerText = translations[lang]["date3-label"];
+      document.getElementById("date2-label").innerText = translations[lang]["date2-label"];
+      document.getElementById("date1-label").innerText = translations[lang]["date1-label"];
       document.getElementById("calculate-btn").innerText = translations[lang]["calculate-btn"];
       document.getElementById("advice-title").innerText = translations[lang]["advice-title"];
       document.getElementById("advice-1").innerText = translations[lang]["advice-1"];
@@ -233,72 +224,6 @@
       document.getElementById("disclaimer").innerText = translations[lang]["disclaimer"];
       document.getElementById("footer").innerHTML = translations[lang]["footer"];
     }
-
-    // Dynamic date input locking and range restrictions (reversed order)
-    document.addEventListener("DOMContentLoaded", function() {
-      const dateInputs = [
-        document.getElementById('date1'),
-        document.getElementById('date2'),
-        document.getElementById('date3'),
-        document.getElementById('date4'),
-        document.getElementById('date5')
-      ];
-      
-      // Initially, only enable the first date (most recent period)
-      for (let i = 1; i < dateInputs.length; i++) {
-        dateInputs[i].disabled = true;
-      }
-
-      // When date1 (most recent) is selected, enable date2 and restrict its max date
-      dateInputs[0].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[1].disabled = false;
-          dateInputs[1].max = this.value;
-        } else {
-          for (let i = 1; i < dateInputs.length; i++) {
-            dateInputs[i].disabled = true;
-            dateInputs[i].value = '';
-          }
-        }
-      });
-
-      // When date2 is selected, enable date3 and restrict its max date
-      dateInputs[1].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[2].disabled = false;
-          dateInputs[2].max = this.value;
-        } else {
-          for (let i = 2; i < dateInputs.length; i++) {
-            dateInputs[i].disabled = true;
-            dateInputs[i].value = '';
-          }
-        }
-      });
-
-      // When date3 is selected, enable date4 and restrict its max date
-      dateInputs[2].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[3].disabled = false;
-          dateInputs[3].max = this.value;
-        } else {
-          for (let i = 3; i < dateInputs.length; i++) {
-            dateInputs[i].disabled = true;
-            dateInputs[i].value = '';
-          }
-        }
-      });
-
-      // When date4 is selected, enable date5 and restrict its max date
-      dateInputs[3].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[4].disabled = false;
-          dateInputs[4].max = this.value;
-        } else {
-          dateInputs[4].disabled = true;
-          dateInputs[4].value = '';
-        }
-      });
-    });
   </script>
 </body>
 </html>
