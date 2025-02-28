@@ -234,8 +234,7 @@
       document.getElementById("footer").innerHTML = translations[lang]["footer"];
     }
 
-    // Dynamic date input locking, range restrictions, and manual validation for iOS Safari.
-    // date2 defaults to date1, date3 defaults to date2. date4 & date5 have no default.
+    // Dynamic date input locking and range restrictions (reversed order)
     document.addEventListener("DOMContentLoaded", function() {
       const dateInputs = [
         document.getElementById('date1'),
@@ -250,15 +249,11 @@
         dateInputs[i].disabled = true;
       }
 
-      // Date1: no parent to validate
+      // When date1 (most recent) is selected, enable date2 and restrict its max date
       dateInputs[0].addEventListener('change', function() {
         if (this.value) {
           dateInputs[1].disabled = false;
           dateInputs[1].max = this.value;
-          // Default date2 to date1 if empty
-          if (!dateInputs[1].value) {
-            dateInputs[1].value = this.value;
-          }
         } else {
           for (let i = 1; i < dateInputs.length; i++) {
             dateInputs[i].disabled = true;
@@ -267,22 +262,11 @@
         }
       });
 
-      // Date2: must be <= date1
+      // When date2 is selected, enable date3 and restrict its max date
       dateInputs[1].addEventListener('change', function() {
         if (this.value) {
-          let selected = new Date(this.value);
-          let parent = new Date(dateInputs[0].value);
-          if (selected > parent) {
-            alert("กรุณาเลือกวันที่น้อยกว่าหรือเท่ากับ " + dateInputs[0].value);
-            this.value = "";
-            return;
-          }
           dateInputs[2].disabled = false;
           dateInputs[2].max = this.value;
-          // Default date3 to date2 if empty
-          if (!dateInputs[2].value) {
-            dateInputs[2].value = this.value;
-          }
         } else {
           for (let i = 2; i < dateInputs.length; i++) {
             dateInputs[i].disabled = true;
@@ -291,16 +275,9 @@
         }
       });
 
-      // Date3: must be <= date2
+      // When date3 is selected, enable date4 and restrict its max date
       dateInputs[2].addEventListener('change', function() {
         if (this.value) {
-          let selected = new Date(this.value);
-          let parent = new Date(dateInputs[1].value);
-          if (selected > parent) {
-            alert("กรุณาเลือกวันที่น้อยกว่าหรือเท่ากับ " + dateInputs[1].value);
-            this.value = "";
-            return;
-          }
           dateInputs[3].disabled = false;
           dateInputs[3].max = this.value;
         } else {
@@ -311,16 +288,9 @@
         }
       });
 
-      // Date4: must be <= date3
+      // When date4 is selected, enable date5 and restrict its max date
       dateInputs[3].addEventListener('change', function() {
         if (this.value) {
-          let selected = new Date(this.value);
-          let parent = new Date(dateInputs[2].value);
-          if (selected > parent) {
-            alert("กรุณาเลือกวันที่น้อยกว่าหรือเท่ากับ " + dateInputs[2].value);
-            this.value = "";
-            return;
-          }
           dateInputs[4].disabled = false;
           dateInputs[4].max = this.value;
         } else {
