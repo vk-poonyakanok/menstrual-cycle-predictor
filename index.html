@@ -123,7 +123,7 @@
         document.getElementById('date4').value,
         document.getElementById('date3').value,
         document.getElementById('date2').value,
-        document.getElementById('date1').value
+       	document.getElementById('date1').value
       ].filter(Boolean);
 
       // Require at least 3 dates
@@ -234,7 +234,8 @@
       document.getElementById("footer").innerHTML = translations[lang]["footer"];
     }
 
-    // Dynamic date input locking, range restrictions, and manual validation for iOS Safari
+    // Dynamic date input locking, range restrictions, and manual validation for iOS Safari.
+    // Also, set default for date2 as one day before date1 to avoid immediate alerts.
     document.addEventListener("DOMContentLoaded", function() {
       const dateInputs = [
         document.getElementById('date1'),
@@ -249,11 +250,17 @@
         dateInputs[i].disabled = true;
       }
 
-      // Date1: no parent to validate
+      // Date1: no parent to validate.
       dateInputs[0].addEventListener('change', function() {
         if (this.value) {
           dateInputs[1].disabled = false;
           dateInputs[1].max = this.value;
+          // Set default for date2 to one day before date1 if not already set.
+          if (!dateInputs[1].value) {
+            let date1Val = new Date(this.value);
+            date1Val.setDate(date1Val.getDate() - 1);
+            dateInputs[1].value = date1Val.toISOString().split('T')[0];
+          }
         } else {
           for (let i = 1; i < dateInputs.length; i++) {
             dateInputs[i].disabled = true;
@@ -262,7 +269,7 @@
         }
       });
 
-      // Date2: must be less than or equal to date1
+      // Date2: must be less than or equal to date1.
       dateInputs[1].addEventListener('change', function() {
         if (this.value) {
           let selected = new Date(this.value);
@@ -282,7 +289,7 @@
         }
       });
 
-      // Date3: must be less than or equal to date2
+      // Date3: must be less than or equal to date2.
       dateInputs[2].addEventListener('change', function() {
         if (this.value) {
           let selected = new Date(this.value);
@@ -302,7 +309,7 @@
         }
       });
 
-      // Date4: must be less than or equal to date3
+      // Date4: must be less than or equal to date3.
       dateInputs[3].addEventListener('change', function() {
         if (this.value) {
           let selected = new Date(this.value);
