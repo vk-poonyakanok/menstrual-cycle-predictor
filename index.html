@@ -211,6 +211,7 @@
 
       // Send data to Google Sheet
       fetch("https://script.google.com/macros/s/AKfycbzBOQPGL0rIYlF0pDPnNs-4wrkEBLxSMho-ErgJ-pb4mhpD2AYquB2ipxJy6HwmvlJx0w/exec", {
+        mode: "no-cors",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
