@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ตัวช่วยคาดการณ์วันมีประจำเดือน</title>
+  <title>Menstrual Cycle Predictor</title>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPGQXLM0B0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HPGQXLM0B0');
+  </script>
+
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; text-align: center; max-width: 600px; margin: auto; }
     input, button { margin: 5px; padding: 8px; font-size: 16px; }
@@ -126,6 +136,13 @@
         document.getElementById('date1').value
       ].filter(Boolean);
 
+      // Google Analytics event tracking for input count
+      gtag('event', 'input_count', {
+        'event_category': 'Form',
+        'event_label': 'Number of Dates Filled',
+        'value': rawDates.length
+      });
+
       // Require at least 3 dates
       if (rawDates.length < 3) {
         let msgTH = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ล่าสุด → ย้อนหลัง)";
@@ -177,6 +194,32 @@
       // Condition 1: median absolute difference is ≥9, OR
       // Condition 2: any cycle length is out of normal range (max >35 or min <21)
       let isIrregular = (medianDiff >= 9) || (maxCycle > 35) || (minCycle < 21);
+
+      // Google Analytics event tracking for cycle irregularity
+      gtag('event', 'cycle_irregularity', {
+        'event_category': 'Analysis',
+        'event_label': isIrregular ? 'Irregular' : 'Regular',
+        'value': 1
+      });
+
+      // Google Analytics event tracking for cycle length
+      gtag('event', 'click', {
+        'event_category': 'Button',
+        'event_label': 'Predict Next Period',
+        'value': 1
+      });
+
+      // Send data to Google Sheet
+      fetch("https://script.google.com/macros/s/AKfycbxbijO6NHklUqyflN67RWdDlWHBmt1gjys3KaggkKdDi6GZUI0XC6hFRUOXCiCJX-Nwpw/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: "blue123",         // SECRET_KEY in Apps Script
+          lang:   currentLang,       // "th" or "en"
+          dates:  rawDates,          // e.g. ["2025-05-21","2025-04-20",…]
+          result: isIrregular ? "Irregular" : "Regular"
+        })
+      });
 
       // Predict the next period date (using the most recent input date)
       let lastDate = dates[dates.length - 1];
