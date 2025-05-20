@@ -210,16 +210,20 @@
       });
 
       // Send data to Google Sheet
-      fetch("https://script.google.com/macros/s/AKfycbxbijO6NHklUqyflN67RWdDlWHBmt1gjys3KaggkKdDi6GZUI0XC6hFRUOXCiCJX-Nwpw/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbzBOQPGL0rIYlF0pDPnNs-4wrkEBLxSMho-ErgJ-pb4mhpD2AYquB2ipxJy6HwmvlJx0w/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          secret: "blue123",         // SECRET_KEY in Apps Script
-          lang:   currentLang,       // "th" or "en"
-          dates:  rawDates,          // e.g. ["2025-05-21","2025-04-20",…]
-          result: isIrregular ? "Irregular" : "Regular"
+          lang:   currentLang,      // "th" or "en"
+          dates:  rawDates,         // e.g. ["2025-05-21","2025-04-20",…]
+          result: isIrregular
+                ? "Irregular"
+                : "Regular"
         })
-      });
+      })
+      .then(res => res.text())
+      .then(txt => console.log("Log response:", txt))
+      .catch(err => console.error("Log error:", err));
 
       // Predict the next period date (using the most recent input date)
       let lastDate = dates[dates.length - 1];
