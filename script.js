@@ -37,8 +37,7 @@ const t = {
   en: {
     title: "Menstrual Cycle Predictor",
     instruction: `Enter the <b>first day of each period</b> <span class="mono">(most recent → earlier)</span>
-      <span class="pill">at least 3 times</span> <span class="sep">•</span>
-      <span class="pill">up to 5 times</span>`,
+      <span class="pill">at least 3 times</span>`,
     date1: "First day of the most recent period (LMP):",
     date2: "First day of the previous period (PMP):",
     date3: "First day of the earlier period:",
