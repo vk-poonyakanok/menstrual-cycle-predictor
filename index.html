@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menstrual Cycle Predictor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ตัวช่วยคาดการณ์วันมีประจำเดือน</title>
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" type="image/png" href="icon.png" />
+  <link rel="stylesheet" href="style.css" />
 
-  <!-- Google Analytics -->
+  <!-- Google Analytics (unchanged) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPGQXLM0B0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -14,339 +17,167 @@
     gtag('config', 'G-HPGQXLM0B0');
   </script>
 
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; text-align: center; max-width: 600px; margin: auto; }
-    input, button { margin: 5px; padding: 8px; font-size: 16px; }
-    .result { margin-top: 15px; font-weight: bold; color: blue; }
-    .alert { color: red; font-weight: bold; }
-    .optional { color: gray; font-size: 14px; }
-    .info-box { text-align: left; background: #f9f9f9; padding: 15px; margin-top: 20px; border-left: 4px solid #ffcc00; }
-    .lang-btn { font-size: 14px; padding: 5px 10px; cursor: pointer; }
-    .footer { margin-top: 30px; font-size: 12px; color: gray; }
-    .disclaimer { font-size: 12px; margin-top: 20px; color: red; font-weight: bold; }
-    .date-container { display: flex; flex-direction: column; align-items: center; }
-    .date-row { display: flex; justify-content: space-between; width: 100%; }
-    .date-row label { text-align: left; flex: 1; }
-    .date-row input { flex: 1; }
-  </style>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <button class="lang-btn" onclick="toggleLanguage()">🇹🇭 TH / 🇬🇧 EN</button>
+  <header class="topbar">
+    <div class="brand">
+      <img src="icon.png" alt="" class="logo" />
+      <span id="app-name">ตัวช่วยคาดการณ์วันมีประจำเดือน</span>
+    </div>
 
-  <h2 id="title">ตัวช่วยคาดการณ์วันมีประจำเดือน</h2>
-  <p id="instruction">กรอก <b>วันแรกของประจำเดือน</b> (ล่าสุด → ย้อนหลัง) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง</p>
+    <div class="lang-toggle" role="group" aria-label="Language toggle">
+      <button id="btn-th" class="seg active" data-lang="th" aria-pressed="true">TH</button>
+      <button id="btn-en" class="seg" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
 
-  <div class="date-container">
-    <div class="date-row">
-      <label id="date1-label">วันแรกของประจำเดือนครั้งล่าสุด (LMP):</label>
-      <input type="date" id="date1" required>
-    </div>
-    <div class="date-row">
-      <label id="date2-label">วันแรกของประจำเดือนครั้งก่อนหน้า (PMP):</label>
-      <input type="date" id="date2" required>
-    </div>
-    <div class="date-row">
-      <label id="date3-label">วันแรกของประจำเดือนก่อนหน้านั้น:</label>
-      <input type="date" id="date3" required>
-    </div>
-    <div class="date-row">
-      <label id="date4-label" class="optional">(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:</label>
-      <input type="date" id="date4">
-    </div>
-    <div class="date-row">
-      <label id="date5-label" class="optional">(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:</label>
-      <input type="date" id="date5">
+  <main class="container">
+    <section class="card">
+      <!-- Emphasized instruction -->
+      <div class="guide-banner" id="guide">
+        <div class="guide-icon">📝</div>
+        <div class="guide-text" id="instruction">
+          กรอก <b>วันแรกของประจำเดือน</b> <span class="mono">(ล่าสุด → ย้อนหลัง)</span>
+          <span class="pill">อย่างน้อย 3 ครั้ง</span>
+        </div>
+      </div>
+
+      <form id="cycle-form" novalidate>
+        <div class="grid vertical-only">
+          <label class="field date-block">
+            <span id="date1-label" class="label">วันแรกของประจำเดือนครั้งล่าสุด (LMP):</span>
+            <input type="date" id="date1" autocomplete="off" required />
+          </label>
+
+          <label class="field date-block">
+            <span id="date2-label" class="label">วันแรกของประจำเดือนครั้งก่อนหน้า (PMP):</span>
+            <input type="date" id="date2" autocomplete="off" disabled required />
+          </label>
+
+          <label class="field date-block">
+            <span id="date3-label" class="label">วันแรกของประจำเดือนก่อนหน้านั้น:</span>
+            <input type="date" id="date3" autocomplete="off" disabled required />
+          </label>
+
+          <label class="field date-block">
+            <span id="date4-label" class="label optional">(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:</span>
+            <input type="date" id="date4" autocomplete="off" disabled />
+          </label>
+
+          <label class="field date-block">
+            <span id="date5-label" class="label optional">(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:</span>
+            <input type="date" id="date5" autocomplete="off" disabled />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="btn-calc" class="btn primary">
+            <span id="calculate-btn">คำนวณวันมีประจำเดือนถัดไป</span>
+          </button>
+          <button type="button" id="btn-clear" class="btn red">ล้างค่า</button>
+        </div>
+      </form>
+
+      <div id="alert" class="alert" role="status" aria-live="polite"></div>
+
+      <div id="result-card" class="result-card hidden" role="region" aria-live="polite">
+        <div class="result-head">
+          <div class="title" id="result-title">ผลการคำนวณ</div>
+          <div class="badges">
+            <span id="badge-regularity" class="badge">ปกติ</span>
+            <span id="badge-confidence" class="badge info">ความน่าเชื่อถือ: –</span>
+          </div>
+        </div>
+
+        <div class="result-body">
+          <p id="predicted-line"><b>คาดการณ์วันมีประจำเดือนถัดไป:</b> –</p>
+          <ul class="list">
+            <li id="cycles-line"><b>ความยาวรอบเดือน (วัน):</b> –</li>
+            <li id="median-line"><b>ค่ากลางของความยาวรอบเดือน:</b> –</li>
+            <li id="mad-line"><b>ค่ากลางความแตกต่างของรอบเดือน:</b> –</li>
+            <li id="credibility-line"><b>ความน่าเชื่อถือ:</b> –</li>
+          </ul>
+
+          <!-- Yellow warning box -->
+          <div class="warning-box">
+            <div class="title">คำแนะนำและข้อควรทราบ</div>
+            <p id="adv-1">หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ</p>
+            <p id="adv-2">หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์</p>
+            <p id="disc">เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์</p>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="btn-copy" class="btn small"><span id="copy-btn-label">คัดลอกผลลัพธ์</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- References -->
+    <section class="card refs">
+      <h2 id="refs-title">เอกสารอ้างอิง</h2>
+      <ol class="refs-list" id="refs-list">
+        <li>
+          Apple Women’s Health Study (September 2023).
+          <em>Menstrual cycle length and variability: a visual explanation.</em>
+          <a href="https://awhs-updates.hsph.harvard.edu/cycle-length-variability/" target="_blank" rel="noopener">ลิงค์</a>
+        </li>
+        <li>
+          Bull JR, et&nbsp;al. (2019).
+          <em>Real-world menstrual cycle characteristics of more than 600,000 menstrual cycles.</em>
+          npj Digital Medicine, 2(83).
+          <a href="https://www.nature.com/articles/s41746-019-0152-7" target="_blank" rel="noopener">ลิงค์</a>
+        </li>
+        <li>
+          ACOG Committee Opinion No. 651 (Dec 2015; reaffirmed 2020).
+          <em>Menstruation in Girls and Adolescents: Using the Menstrual Cycle as a Vital Sign.</em>
+          <a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2015/12/menstruation-in-girls-and-adolescents-using-the-menstrual-cycle-as-a-vital-sign" target="_blank" rel="noopener">ลิงค์</a>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small id="footer">
+      จัดทำโดย นพ.วิชชากร ปุณยกนก • แก้ไขล่าสุด 12 กันยายน 2568 •
+      <a href="https://github.com/vk-poonyakanok/menstrual-cycle-predictor" target="_blank" rel="noopener">GitHub</a>
+    </small>
+  </footer>
+
+  <!-- ===== Result Popup (Modal) ===== -->
+  <div id="result-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-content" role="document">
+      <div class="modal-head">
+        <div class="modal-title" id="modal-title">ผลคาดการณ์วันมีประจำเดือนถัดไป</div>
+        <button id="modal-close" class="icon-btn" aria-label="ปิด">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-topline">
+          <div id="modal-date" class="big-date">—</div>
+          <div class="badges" id="modal-badges">
+            <span id="m-badge-regularity" class="badge">ปกติ</span>
+            <span id="m-badge-confidence" class="badge info">ความน่าเชื่อถือ: –</span>
+          </div>
+        </div>
+
+        <!-- details list intentionally removed from popup -->
+
+        <!-- Same yellow warning box style in modal -->
+        <div class="warning-box">
+          <div class="title">คำแนะนำและข้อควรทราบ</div>
+          <p id="m-adv-1"></p>
+          <p id="m-adv-2"></p>
+          <p id="m-disc"></p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="modal-copy" class="btn primary">คัดลอกวันที่</button>
+        <button id="modal-dismiss" class="btn red">ปิด</button>
+      </div>
     </div>
   </div>
-
-  <button onclick="calculateNext()" id="calculate-btn">คำนวณวันมีประจำเดือนถัดไป</button>
-
-  <div class="result" id="result"></div>
-  <div class="alert" id="alert"></div>
-
-  <div class="info-box">
-    <strong>⚠️ <span id="advice-title">ข้อควรระวัง:</span></strong>
-    <ul>
-      <li id="advice-1">หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ</li>
-      <li id="advice-2">หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์</li>
-    </ul>
-  </div>
-
-  <div class="disclaimer" id="disclaimer">
-    เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์
-  </div>
-
-  <div class="footer" id="footer">
-    จัดทำโดย นพ.วิชชากร ปุณยกนก<br>
-    แก้ไขล่าสุด 28 กุมภาพันธ์ 2568<br>
-    <a href="https://github.com/vk-poonyakanok/menstrual-cycle-predictor" target="_blank">GitHub</a>
-  </div>
-
-  <script>
-    // Store all translations here
-    const translations = {
-      "th": {
-        "title": "ตัวช่วยคาดการณ์วันมีประจำเดือน",
-        "instruction": "กรอก <b>วันแรกของประจำเดือน</b> (ล่าสุด → ย้อนหลัง) อย่างน้อย 3 ครั้ง, มากสุด 5 ครั้ง",
-        "date1-label": "วันแรกของประจำเดือนครั้งล่าสุด (LMP):",
-        "date2-label": "วันแรกของประจำเดือนครั้งก่อนหน้า (PMP):",
-        "date3-label": "วันแรกของประจำเดือนก่อนหน้านั้น:",
-        "date4-label": "(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:",
-        "date5-label": "(ถ้ามี) วันแรกของประจำเดือนก่อนหน้านั้น:",
-        "calculate-btn": "คำนวณวันมีประจำเดือนถัดไป",
-        "advice-title": "ข้อควรระวัง:",
-        "advice-1": "หากรอบเดือนสั้นกว่า 21 วัน หรือยาวเกิน 35 วัน หรือไม่สม่ำเสมออย่างชัดเจน อาจเป็นสัญญาณของปัญหาสุขภาพ",
-        "advice-2": "หากขาดประจำเดือนเป็นเวลานานกว่า 90 วัน ติดต่อกัน ควรปรึกษาแพทย์",
-        "disclaimer": "เอกสารนี้เป็นเพียงเครื่องมือให้ความรู้ ไม่ได้ใช้แทนการวินิจฉัยหรือคำแนะนำทางการแพทย์",
-        "footer": "จัดทำโดย นพ.วิชชากร ปุณยกนก<br>แก้ไขล่าสุด 28 กุมภาพันธ์ 2568<br><a href='https://github.com/vk-poonyakanok/menstrual-cycle-predictor' target='_blank'>GitHub</a>"
-      },
-      "en": {
-        "title": "Menstrual Cycle Predictor",
-        "instruction": "Enter the <b>first day of each period</b> (most recent → earlier) at least 3 times, up to 5 times",
-        "date1-label": "First day of the most recent period (LMP):",
-        "date2-label": "First day of the previous period (PMP):",
-        "date3-label": "First day of the earlier period:",
-        "date4-label": "(If available) First day of the earlier period:",
-        "date5-label": "(If available) First day of the earlier period:",
-        "calculate-btn": "Predict Next Period Date",
-        "advice-title": "Caution:",
-        "advice-1": "If the cycle is shorter than 21 days or longer than 35 days, or obviously irregular, it could be a sign of a health issue.",
-        "advice-2": "If you miss your period for more than 90 consecutive days, please consult a doctor.",
-        "disclaimer": "This document is only a knowledge tool and does not replace diagnosis or medical advice.",
-        "footer": "Created by Vitchakorn Poonyakanok<br>Last updated: February 28, 2025<br><a href='https://github.com/vk-poonyakanok/menstrual-cycle-predictor' target='_blank'>GitHub</a>"
-      }
-    };
-
-    function calculateNext() {
-      // Reset alerts/results each time
-      document.getElementById('alert').innerText = "";
-      document.getElementById('result').innerText = "";
-
-      // Get current language
-      let currentLang = document.documentElement.lang;
-
-      // Gather dates in ascending order (oldest to newest)
-      // Although fields are displayed in reverse order (most recent → earlier),
-      // we collect them as: [date5, date4, date3, date2, date1]
-      let rawDates = [
-        document.getElementById('date5').value,
-        document.getElementById('date4').value,
-        document.getElementById('date3').value,
-        document.getElementById('date2').value,
-        document.getElementById('date1').value
-      ].filter(Boolean);
-
-      // Google Analytics event tracking for input count
-      gtag('event', 'input_count', {
-        'event_category': 'Form',
-        'event_label': 'Number of Dates Filled',
-        'value': rawDates.length
-      });
-
-      // Require at least 3 dates
-      if (rawDates.length < 3) {
-        let msgTH = "กรุณากรอกข้อมูลอย่างน้อย 3 วัน (ล่าสุด → ย้อนหลัง)";
-        let msgEN = "Please enter at least 3 dates (most recent → earlier)";
-        document.getElementById('result').innerText = (currentLang === "th") ? msgTH : msgEN;
-        return;
-      }
-
-      // Convert to Date objects
-      let dates = rawDates.map(d => new Date(d));
-
-      // Ensure proper ordering (oldest → newest)
-      for (let i = 0; i < dates.length - 1; i++) {
-        if (dates[i] > dates[i + 1]) {
-          let warnTH = "⚠️ กรุณาเรียงลำดับวันที่ให้ถูกต้อง (ล่าสุด → ย้อนหลัง)";
-          let warnEN = "⚠️ Please ensure dates are in correct order (most recent → earlier)";
-          document.getElementById('alert').innerText = (currentLang === "th") ? warnTH : warnEN;
-          return;
-        }
-      }
-
-      // Calculate cycle lengths (in days)
-      let cycleLengths = [];
-      for (let i = 0; i < dates.length - 1; i++) {
-        let diff = (dates[i + 1] - dates[i]) / (1000 * 60 * 60 * 24);
-        cycleLengths.push(diff);
-      }
-
-      // Find the median cycle length (for information purposes)
-      let sortedCycles = [...cycleLengths].sort((a, b) => a - b);
-      let mid = Math.floor(sortedCycles.length / 2);
-      let medianCycle = (sortedCycles.length % 2 === 1)
-        ? sortedCycles[mid]
-        : (sortedCycles[mid - 1] + sortedCycles[mid]) / 2;
-
-      // Calculate the median absolute difference of cycle lengths
-      let diffsFromMedian = cycleLengths.map(c => Math.abs(c - medianCycle));
-      let sortedDiffs = diffsFromMedian.sort((a, b) => a - b);
-      let midDiff = Math.floor(sortedDiffs.length / 2);
-      let medianDiff = (sortedDiffs.length % 2 === 1)
-        ? sortedDiffs[midDiff]
-        : (sortedDiffs[midDiff - 1] + sortedDiffs[midDiff]) / 2;
-
-      // Calculate range values (max and min cycle lengths)
-      let maxCycle = Math.max(...cycleLengths);
-      let minCycle = Math.min(...cycleLengths);
-
-      // Determine if the cycle is irregular:
-      // Condition 1: median absolute difference is ≥9, OR
-      // Condition 2: any cycle length is out of normal range (max >35 or min <21)
-      let isIrregular = (medianDiff >= 9) || (maxCycle > 35) || (minCycle < 21);
-
-      // Google Analytics event tracking for cycle irregularity
-      gtag('event', 'cycle_irregularity', {
-        'event_category': 'Analysis',
-        'event_label': isIrregular ? 'Irregular' : 'Regular',
-        'value': 1
-      });
-
-      // Google Analytics event tracking for cycle length
-      gtag('event', 'click', {
-        'event_category': 'Button',
-        'event_label': 'Predict Next Period',
-        'value': 1
-      });
-
-      // Send data to Google Sheet
-      fetch("https://script.google.com/macros/s/AKfycbzBOQPGL0rIYlF0pDPnNs-4wrkEBLxSMho-ErgJ-pb4mhpD2AYquB2ipxJy6HwmvlJx0w/exec", {
-        mode: "no-cors",
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lang:   currentLang,      // "th" or "en"
-          dates:  rawDates,         // e.g. ["2025-05-21","2025-04-20",…]
-          result: isIrregular
-                ? "Irregular"
-                : "Regular"
-        })
-      })
-      .then(res => res.text())
-      .then(txt => console.log("Log response:", txt))
-      .catch(err => console.error("Log error:", err));
-
-      // Predict the next period date (using the most recent input date)
-      let lastDate = dates[dates.length - 1];
-      let predicted = new Date(lastDate);
-      predicted.setDate(predicted.getDate() + medianCycle);
-
-      // Format predicted date based on language:
-      // Use the Buddhist calendar for Thai mode.
-      let predictedDateTH = predicted.toLocaleDateString('th-TH-u-ca-buddhist', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-      });
-      let predictedDateEN = predicted.toLocaleDateString('en-US', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-      });
-
-      // Build result text
-      let resultTH = `
-        <b>คาดการณ์วันมีประจำเดือนถัดไป:</b> ${predictedDateTH}<br>
-        <b>ความยาวรอบเดือน (วัน):</b> ${cycleLengths.join(", ")}<br>
-        <b>ค่ากลางของความยาวรอบเดือน:</b> ${medianCycle.toFixed(1)} วัน<br>
-        <b>ค่ากลางความแตกต่างของรอบเดือน:</b> ${medianDiff.toFixed(1)} วัน<br>
-        ${isIrregular ? "รอบประจำเดือนจัดว่าไม่สม่ำเสมอ (Irregular)." 
-                      : "รอบประจำเดือนจัดว่าสม่ำเสมอ (Regular)."}
-      `;
-      let resultEN = `
-        <b>Predicted next period date:</b> ${predictedDateEN}<br>
-        <b>Cycle lengths (days):</b> ${cycleLengths.join(", ")}<br>
-        <b>Median cycle length (days):</b> ${medianCycle.toFixed(1)}<br>
-        <b>Median difference (variability):</b> ${medianDiff.toFixed(1)} days<br>
-        ${isIrregular ? "The cycle is considered Irregular." 
-                      : "The cycle is considered Regular."}
-      `;
-
-      // Display the result based on the current language
-      document.getElementById('result').innerHTML = (currentLang === "th") ? resultTH : resultEN;
-    }
-
-    function toggleLanguage() {
-      let lang = document.documentElement.lang === "th" ? "en" : "th";
-      document.documentElement.lang = lang;
-
-      // Update text elements from the translations object
-      document.getElementById("title").innerHTML = translations[lang]["title"];
-      document.getElementById("instruction").innerHTML = translations[lang]["instruction"];
-      document.getElementById("date1-label").innerText = translations[lang]["date1-label"];
-      document.getElementById("date2-label").innerText = translations[lang]["date2-label"];
-      document.getElementById("date3-label").innerText = translations[lang]["date3-label"];
-      document.getElementById("date4-label").innerText = translations[lang]["date4-label"];
-      document.getElementById("date5-label").innerText = translations[lang]["date5-label"];
-      document.getElementById("calculate-btn").innerText = translations[lang]["calculate-btn"];
-      document.getElementById("advice-title").innerText = translations[lang]["advice-title"];
-      document.getElementById("advice-1").innerText = translations[lang]["advice-1"];
-      document.getElementById("advice-2").innerText = translations[lang]["advice-2"];
-      document.getElementById("disclaimer").innerText = translations[lang]["disclaimer"];
-      document.getElementById("footer").innerHTML = translations[lang]["footer"];
-    }
-
-    // Dynamic date input locking and range restrictions (reversed order)
-    document.addEventListener("DOMContentLoaded", function() {
-      const dateInputs = [
-        document.getElementById('date1'),
-        document.getElementById('date2'),
-        document.getElementById('date3'),
-        document.getElementById('date4'),
-        document.getElementById('date5')
-      ];
-      
-      // Initially, only enable the first date (most recent period)
-      for (let i = 1; i < dateInputs.length; i++) {
-        dateInputs[i].disabled = true;
-      }
-
-      // When date1 (most recent) is selected, enable date2 and restrict its max date
-      dateInputs[0].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[1].disabled = false;
-          dateInputs[1].max = this.value;
-        } else {
-          for (let i = 1; i < dateInputs.length; i++) {
-            dateInputs[i].disabled = true;
-            dateInputs[i].value = '';
-          }
-        }
-      });
-
-      // When date2 is selected, enable date3 and restrict its max date
-      dateInputs[1].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[2].disabled = false;
-          dateInputs[2].max = this.value;
-        } else {
-          for (let i = 2; i < dateInputs.length; i++) {
-            dateInputs[i].disabled = true;
-            dateInputs[i].value = '';
-          }
-        }
-      });
-
-      // When date3 is selected, enable date4 and restrict its max date
-      dateInputs[2].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[3].disabled = false;
-          dateInputs[3].max = this.value;
-        } else {
-          for (let i = 3; i < dateInputs.length; i++) {
-            dateInputs[i].disabled = true;
-            dateInputs[i].value = '';
-          }
-        }
-      });
-
-      // When date4 is selected, enable date5 and restrict its max date
-      dateInputs[3].addEventListener('change', function() {
-        if (this.value) {
-          dateInputs[4].disabled = false;
-          dateInputs[4].max = this.value;
-        } else {
-          dateInputs[4].disabled = true;
-          dateInputs[4].value = '';
-        }
-      });
-    });
-  </script>
+  <!-- ===== End Popup ===== -->
 </body>
 </html>
