@@ -64,9 +64,14 @@ body {
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  object-fit: contain;
   background-color: var(--accent);
-  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: #fff;
+  cursor: default;
 }
 
 #app-name {
