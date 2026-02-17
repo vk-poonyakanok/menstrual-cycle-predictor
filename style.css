@@ -65,6 +65,8 @@ body {
   height: 28px;
   border-radius: 6px;
   object-fit: contain;
+  background-color: var(--accent);
+  padding: 4px;
 }
 
 #app-name {
