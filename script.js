@@ -170,9 +170,19 @@ function wireDateBlockClicks(){
   });
 }
 
+/**
+ * Helper: Parse "YYYY-MM-DD" as local midnight date.
+ * Avoids new Date("YYYY-MM-DD") which parses as UTC.
+ */
+function parseDate(str){
+  if(!str) return null;
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
 function collectDatesAscending(){
   const vals = inputs.map(x=>x.value).filter(Boolean);
-  const ds = vals.map(d=>new Date(d));
+  const ds = vals.map(parseDate);
   ds.sort((a,b)=>a-b);
   return ds;
 }
@@ -206,8 +216,8 @@ function computeCredibility(n, median, mad, lang){
 
 function predictNextDate(datesAsc, median){
   const last = datesAsc[datesAsc.length-1];
-  const predicted=new Date(last);
-  predicted.setDate(predicted.getDate()+median);
+  const predicted = new Date(last.getFullYear(), last.getMonth(), last.getDate());
+  predicted.setDate(predicted.getDate() + Math.round(median));
   return predicted;
 }
 
@@ -320,11 +330,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const cred  = computeCredibility(ds.length, stats.median, stats.mad, lang);
 
     // Optional logging (fire-and-forget)
+    // Send standard YYYY-MM-DD strings in the JSON payload
     fetch("https://script.google.com/macros/s/AKfycbzBOQPGL0rIYlF0pDPnNs-4wrkEBLxSMho-ErgJ-pb4mhpD2AYquB2ipxJy6HwmvlJx0w/exec",{
       mode:"no-cors", method:"POST", headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         lang,
-        dates: ds.map(d=>d.toISOString().slice(0,10)),
+        dates: ds.map(d => {
+          // Format as "YYYY-MM-DD" local time
+          const y = d.getFullYear();
+          const m = String(d.getMonth()+1).padStart(2,'0');
+          const day = String(d.getDate()).padStart(2,'0');
+          return `${y}-${m}-${day}`;
+        }),
         result: stats.irregular ? 'Irregular' : 'Regular',
         credibility: cred.key
       })
